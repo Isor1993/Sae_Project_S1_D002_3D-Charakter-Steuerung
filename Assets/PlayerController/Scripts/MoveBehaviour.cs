@@ -1,4 +1,14 @@
-using Unity.VisualScripting;
+/*****************************************************************************
+* Project : 3D Charakter Steuerung (K2, S2, S3)
+* File    : MoveConfig
+* Date    : xx.xx.2025
+* Author  : Eric Rosenberg
+*
+* Description :
+* *
+* History :
+* xx.xx.2025 ER Created
+******************************************************************************/
 using UnityEngine;
 
 public class MoveBehaviour
