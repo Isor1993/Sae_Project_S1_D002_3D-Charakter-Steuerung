@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124dbd36b1583df47a71865afc9cd7dd, type: 3}
   m_Name: MoveConfig
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
-  SprintSpeed: 10
+  MoveSpeed: 4
+  SprintSpeed: 6
   Deceleration: 30
   Acceleration: 40
-  AirControll: 0.8
+  AirStartSpeed: 1
+  AirBrake: 8
+  AirControll: 2

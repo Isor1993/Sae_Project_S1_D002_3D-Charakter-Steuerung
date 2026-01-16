@@ -29,38 +29,91 @@ public class MoveBehaviour
 
     public void Move(Vector2 moveInput, bool isGrounded, bool isSprinting)
     {
-        Vector3 velocity;
+     
+           Vector3 velocity = _rb.linearVelocity;
         if (isGrounded)
         {
-            velocity = _rb.linearVelocity;
             velocity = OnGround(moveInput, velocity, isSprinting);
-            _rb.linearVelocity = velocity;
+        }
+        else
+        {
+            velocity = InAir(moveInput, velocity);
         }
 
+            _rb.linearVelocity = velocity;
 
     }
 
     private Vector3 OnGround(Vector2 moveInput, Vector3 currentVelocity, bool isSprinting)
     {
-        var moveSpeed = moveInput * _moveConfig.MoveSpeed;
-        var sprintSpeed = moveInput * _moveConfig.SprintSpeed;
-        var acceleration = _moveConfig.Acceleration;
-        var deceleration = _moveConfig.Deceleration;
+        Vector3 moveDir = (_rb.transform.forward * moveInput.y + _rb.transform.right * moveInput.x).normalized;
 
-        if (!isSprinting)
-        {
-            currentVelocity.x = Mathf.MoveTowards(currentVelocity.x, moveSpeed.x, acceleration * Time.fixedDeltaTime);
-            currentVelocity.z = Mathf.MoveTowards(currentVelocity.z, moveSpeed.y, acceleration * Time.fixedDeltaTime);
-            Debug.Log($"{currentVelocity.x}||{currentVelocity.z}");
-        }
-        else
-        {
-            currentVelocity.x = Mathf.MoveTowards(currentVelocity.x, sprintSpeed.x, acceleration * Time.fixedDeltaTime);
-            currentVelocity.z = Mathf.MoveTowards(currentVelocity.z, sprintSpeed.y, acceleration * Time.fixedDeltaTime);
-            Debug.Log($"{currentVelocity.x}||{currentVelocity.z}");
-        }
+        float targetSpeed = isSprinting ? _moveConfig.SprintSpeed : _moveConfig.MoveSpeed;
+
+        Vector3 targetVelocity = moveDir * targetSpeed;
+
+        float accel = moveInput.sqrMagnitude > 0f ? _moveConfig.Acceleration : _moveConfig.Deceleration;
+
+        currentVelocity.x = Mathf.MoveTowards(currentVelocity.x, targetVelocity.x, accel * Time.fixedDeltaTime);
+
+        currentVelocity.z = Mathf.MoveTowards(currentVelocity.z, targetVelocity.z, accel * Time.fixedDeltaTime);
 
         return currentVelocity;
+    }
+
+    private Vector3 InAir(Vector2 moveInput, Vector3 currentVelocity)
+    {
+        // ? Nur blockieren, wenn Spieler NICHT lenken will
+    if (moveInput.sqrMagnitude <= 0f)
+        return currentVelocity;
+
+    Vector3 horizontal = new Vector3(currentVelocity.x, 0f, currentVelocity.z);
+
+    Vector3 inputDir =
+        (_rb.transform.forward * moveInput.y +
+         _rb.transform.right   * moveInput.x).normalized;
+
+    float speed = horizontal.magnitude;
+
+    // ?? Aus dem Stand: Startimpuls
+    if (speed < 0.1f)
+    {
+        horizontal = inputDir * _moveConfig.AirStartSpeed;
+    }
+    // ?? Mit Momentum: nur Richtung drehen
+    else
+    {
+            Vector3 currentDir = horizontal.normalized;
+            float dot = Vector3.Dot(currentDir, inputDir);
+
+            if (dot > 0f)
+            {
+                // ?? Gleiche Richtung ? LENKEN
+                Vector3 newDir = Vector3.Slerp(
+                    currentDir,
+                    inputDir,
+                    _moveConfig.AirControll * Time.fixedDeltaTime
+                );
+
+                horizontal = newDir * speed;
+            }
+            else
+            {
+                // ?? Gegenrichtung ? BREMSEN
+                speed = Mathf.MoveTowards(
+                    speed,
+                    0f,
+                    _moveConfig.AirBrake * Time.fixedDeltaTime
+                );
+
+                horizontal = currentDir * speed;
+            }
+        }
+
+    currentVelocity.x = horizontal.x;
+    currentVelocity.z = horizontal.z;
+
+    return currentVelocity;
     }
 
 

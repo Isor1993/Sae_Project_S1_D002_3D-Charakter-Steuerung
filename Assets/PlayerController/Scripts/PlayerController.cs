@@ -31,19 +31,23 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Rigibody from Player")]
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private GroundCheck _groundCheck;
+    [SerializeField] private Transform _camTransform;
 
     [Tooltip("MoveConfig Asset")]
     [SerializeField] private MoveConfig _moveConfig;
     [SerializeField] private JumpConfig _jumpConfig;
+    [SerializeField] private LookConfig _lookConfig;
 
     [Tooltip("Activates Multi Jump")]
     [SerializeField] private bool _multiJumpEnabled = true;
 
     private MoveBehaviour _moveBehaviour;
     private JumpBehaviour _jumpBehaviour;
+    private LookBehaviour _lookBehaviour;
 
     //--- Fields ---
     private Vector2 _moveInput;
+    private Vector2 _lookInput;
     private JumpStateData JumpData;
 
     private float _coyoteTimeCounter = 0f;
@@ -104,6 +108,9 @@ public class PlayerController : MonoBehaviour
         {
             ResetJumpBufferTimer();
         }
+        _lookInput= _look.ReadValue<Vector2>();
+        Debug.Log($"{_lookInput.x}||{_lookInput.y}");
+        
 
         SetIsSprinting();
     }
@@ -118,7 +125,8 @@ public class PlayerController : MonoBehaviour
         ReduceJumpBuffer();
         HandleGroundTransition();                
         HandleMovement(_isGrounded);
-        HandleJump();        
+        HandleJump();
+        _lookBehaviour.Look(_lookInput);
     }
 
     /// <summary>
@@ -245,8 +253,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ResetGroundJumpCounter()
     {
-        _jumpBehaviour.ResetJumpCountGround();
-        Debug.Log($"[JumpCountGround] is reseted.");
+        _jumpBehaviour.ResetJumpCountGround();        
     }
 
     /// <summary>
@@ -270,6 +277,7 @@ public class PlayerController : MonoBehaviour
     {
         _moveBehaviour = new(_rb, _moveConfig);
         _jumpBehaviour = new(_rb, _jumpConfig);
+        _lookBehaviour = new(_rb, _lookConfig,_camTransform);
         JumpData = new JumpStateData();
     }
 

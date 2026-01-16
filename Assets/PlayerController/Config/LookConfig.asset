@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29033c9cc49c0d44788f41d940aa37ea, type: 3}
-  m_Name: JumpConfig
+  m_Script: {fileID: 11500000, guid: c217757a34aee854987cdcc9bfb1346b, type: 3}
+  m_Name: LookConfig
   m_EditorClassIdentifier: 
-  _jumpforce: 6
-  _coyoteTime: 0.2
-  _jumpBufferTime: 0.15
-  _maxJumpCountAir: 1
-  _jumpCutFactor: 0.7
+  _sensitivity: 0.137
+  _maxLookUp: 80
+  _minLookDown: -80

@@ -424,7 +424,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!136 &660817772
 CapsuleCollider:
@@ -532,8 +532,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rb: {fileID: 660817771}
   _groundCheck: {fileID: 660817777}
+  _camTransform: {fileID: 330585546}
   _moveConfig: {fileID: 11400000, guid: e958d9cdb2a67e140b90d3004a95f572, type: 2}
   _jumpConfig: {fileID: 11400000, guid: 9f20029ef6fa134499d351352130e891, type: 2}
+  _lookConfig: {fileID: 11400000, guid: 5b333527ff0095e4d8c07baee26bf2e7, type: 2}
+  _multiJumpEnabled: 1
 --- !u!114 &660817777
 MonoBehaviour:
   m_ObjectHideFlags: 0
