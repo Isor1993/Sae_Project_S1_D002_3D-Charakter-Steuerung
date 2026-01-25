@@ -83,6 +83,12 @@ public class PlayerController : MonoBehaviour
         MappingInptutAction();
         InitializeData();
     }
+    
+    private void Start()
+    {
+       Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible=false;
+    }
         
     /// <summary>
     /// 

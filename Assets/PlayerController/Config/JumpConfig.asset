@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29033c9cc49c0d44788f41d940aa37ea, type: 3}
   m_Name: JumpConfig
   m_EditorClassIdentifier: 
-  _jumpforce: 6
+  _jumpforce: 4.5
   _coyoteTime: 0.2
   _jumpBufferTime: 0.15
   _maxJumpCountAir: 1
