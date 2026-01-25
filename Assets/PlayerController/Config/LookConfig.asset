@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c217757a34aee854987cdcc9bfb1346b, type: 3}
   m_Name: LookConfig
   m_EditorClassIdentifier: 
-  _sensitivity: 0.276
+  _mouseSensitivity: 0.279
+  _controllerSensitivity: 120
   _maxLookUp: 80
   _minLookDown: -80

@@ -9,9 +9,11 @@
 * History :
 * xx.xx.2025 ER Created
 ******************************************************************************/
-using System;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+
 
 /// <summary>
 /// Data container holding all relevant state information required
@@ -20,9 +22,9 @@ using UnityEngine.InputSystem;
 public struct JumpStateData
 {
     public bool IsGrounded;
-    public bool IsCoyoteActive;   
+    public bool IsCoyoteActive;
     public bool MultiJumpEnabled;
-    
+
 }
 public class PlayerController : MonoBehaviour
 {
@@ -32,6 +34,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private GroundCheck _groundCheck;
     [SerializeField] private Transform _camTransform;
+    [SerializeField] private RaycastTargetProvider _targetProvider;
+    [SerializeField] private TargetHandler _targetHandler;
+    [SerializeField] private GameObject _interactionPanel;
+
 
     [Tooltip("MoveConfig Asset")]
     [SerializeField] private MoveConfig _moveConfig;
@@ -50,6 +56,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 _lookInput;
     private JumpStateData JumpData;
 
+
+
     private float _coyoteTimeCounter = 0f;
     private float _jumpBufferCounter = 0f;
 
@@ -57,6 +65,9 @@ public class PlayerController : MonoBehaviour
     private bool _isGrounded = false;
     private bool _wasGrounded;
     private bool _isSprinting = false;
+    private bool _IsControllerInput;
+
+
 
     private PlayerInputAction _inputAction;
     private InputAction _move;
@@ -83,19 +94,22 @@ public class PlayerController : MonoBehaviour
         MappingInptutAction();
         InitializeData();
     }
-    
+
+
     private void Start()
     {
-       Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible=false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
     }
-        
+
     /// <summary>
     /// 
     /// </summary>
     private void OnEnable()
     {
         _inputAction.Player.Enable();
+
     }
 
     /// <summary>
@@ -109,18 +123,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _moveInput = _move.ReadValue<Vector2>();
+        MappingInput();
         if (_jump.WasPressedThisFrame())
         {
             ResetJumpBufferTimer();
         }
-        _lookInput= _look.ReadValue<Vector2>();
-        Debug.Log($"{_lookInput.x}||{_lookInput.y}");
-        
-
         SetIsSprinting();
+        HandleInteraction();
     }
-
+    
     /// <summary>
     /// 
     /// </summary>
@@ -129,10 +140,42 @@ public class PlayerController : MonoBehaviour
         UpdateGroundState();
         ReduceCoyoteTimer();
         ReduceJumpBuffer();
-        HandleGroundTransition();                
+        HandleGroundTransition();
         HandleMovement(_isGrounded);
         HandleJump();
-        _lookBehaviour.Look(_lookInput);
+        _lookBehaviour.Look(_lookInput, _IsControllerInput);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void MappingInput()
+    {
+        _moveInput = _move.ReadValue<Vector2>();
+        _IsControllerInput = IsControllerLook();
+        _lookInput = _look.ReadValue<Vector2>();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void HandleInteraction()
+    {
+        if (_targetProvider.TryGetTarget(out var hit) &&
+        hit.collider.TryGetComponent<IInteractable>(out var interactable))
+        {
+            Debug.Log($"HIT: {hit.collider.gameObject.name}");
+            _interactionPanel.SetActive(true);
+
+            if (_interact.WasPressedThisFrame())
+            {
+                interactable.Interact();
+            }
+        }
+        else
+        {
+            _interactionPanel.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -209,17 +252,17 @@ public class PlayerController : MonoBehaviour
     /// 
     /// </summary>
     private void HandleJump()
-    {       
+    {
         if (_jumpBufferCounter <= 0f)
             return;
 
         JumpData = BuildJumpData(JumpData);
-       
+
         if (_jumpBehaviour.Jump(JumpData))
-        {            
+        {
             _jumpBufferCounter = 0f;
         }
-    }    
+    }
 
     /// <summary>
     /// Builds and returns the current jump state data.
@@ -230,11 +273,11 @@ public class PlayerController : MonoBehaviour
     /// <returns>
     /// Fully populated JumpStateData struct.
     /// </returns>
-    private JumpStateData BuildJumpData(JumpStateData JumpData) 
+    private JumpStateData BuildJumpData(JumpStateData JumpData)
     {
         JumpData.IsGrounded = _isGrounded;
-        JumpData.IsCoyoteActive = IsCoyoteTimeActive();        
-        JumpData.MultiJumpEnabled = _multiJumpEnabled;       
+        JumpData.IsCoyoteActive = IsCoyoteTimeActive();
+        JumpData.MultiJumpEnabled = _multiJumpEnabled;
 
         return JumpData;
     }
@@ -259,7 +302,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ResetGroundJumpCounter()
     {
-        _jumpBehaviour.ResetJumpCountGround();        
+        _jumpBehaviour.ResetJumpCountGround();
     }
 
     /// <summary>
@@ -283,7 +326,7 @@ public class PlayerController : MonoBehaviour
     {
         _moveBehaviour = new(_rb, _moveConfig);
         _jumpBehaviour = new(_rb, _jumpConfig);
-        _lookBehaviour = new(_rb, _lookConfig,_camTransform);
+        _lookBehaviour = new(_rb, _lookConfig, _camTransform);
         JumpData = new JumpStateData();
     }
 
@@ -294,5 +337,10 @@ public class PlayerController : MonoBehaviour
     private void HandleMovement(bool isGrounded)
     {
         _moveBehaviour.Move(_moveInput, isGrounded, _isSprinting);
+    }
+
+    private bool IsControllerLook()
+    {
+        return _look.activeControl?.device is Gamepad;
     }
 }

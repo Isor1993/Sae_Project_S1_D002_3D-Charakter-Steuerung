@@ -15,22 +15,26 @@ public class LookBehaviour
 
 
 
-    public LookBehaviour(Rigidbody rb,LookConfig lookConfig,Transform camTransform)
+    public LookBehaviour(Rigidbody rb, LookConfig lookConfig, Transform camTransform)
     {
-        _lookConfig=lookConfig;
-        _rb=rb;
-        _camTransform=camTransform;
+        _lookConfig = lookConfig;
+        _rb = rb;
+        _camTransform = camTransform;
+
+
     }
 
-    public void Look(Vector2 lookInput)
+    public void Look(Vector2 lookInput, bool isController)
     {
-        _yaw+=lookInput.x* _lookConfig.Sensitivity;
-        _pitch-=lookInput.y* _lookConfig.Sensitivity;
+        float multiplier = isController ? _lookConfig.ControllerSensitivity * Time.deltaTime : _lookConfig.Sensitivity;
+
+        _yaw += lookInput.x * multiplier;
+        _pitch -= lookInput.y * multiplier;
         _pitch = Mathf.Clamp(_pitch, _lookConfig.MinLookDown, _lookConfig.MaxLookUp);
 
 
-        _rb.rotation= Quaternion.Euler(0, _yaw, 0);
-        _camTransform.localRotation=Quaternion.Euler(_pitch, 0, 0);
+        _rb.rotation = Quaternion.Euler(0, _yaw, 0);
+        _camTransform.localRotation = Quaternion.Euler(_pitch, 0, 0);
 
 
 
