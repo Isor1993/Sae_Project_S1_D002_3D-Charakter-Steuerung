@@ -163,8 +163,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_targetProvider.TryGetTarget(out var hit) &&
         hit.collider.TryGetComponent<IInteractable>(out var interactable))
-        {
-            Debug.Log($"HIT: {hit.collider.gameObject.name}");
+        {          
             _interactionPanel.SetActive(true);
 
             if (_interact.WasPressedThisFrame())
