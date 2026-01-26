@@ -124,6 +124,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         MappingInput();
+        _lookBehaviour.Look(_lookInput, _IsControllerInput);
         if (_jump.WasPressedThisFrame())
         {
             ResetJumpBufferTimer();
@@ -143,7 +144,7 @@ public class PlayerController : MonoBehaviour
         HandleGroundTransition();
         HandleMovement(_isGrounded);
         HandleJump();
-        _lookBehaviour.Look(_lookInput, _IsControllerInput);
+       
     }
 
     /// <summary>
