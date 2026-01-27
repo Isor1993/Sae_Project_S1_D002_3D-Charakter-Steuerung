@@ -1,3 +1,17 @@
+/*****************************************************************************
+* Project : 3D Character Controller (K2, S2, S3)
+* File    : JumpConfig.cs
+* Date    : 28.01.2025
+* Author  : Eric Rosenberg
+*
+* Description :
+* ScriptableObject that stores all configurable jump-related parameters.
+* Allows jump behavior to be adjusted in the Unity Editor without
+* modifying code.
+*
+* History :
+* 28.01.2025 ER Created
+******************************************************************************/
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "JumpConfig", menuName = "Scriptable Objects/JumpConfig")]
@@ -44,5 +58,4 @@ public class JumpConfig : ScriptableObject
     /// Gets the jump cut factor used to reduce upward velocity when the jump button is released early.
     /// </summary>
     public float JumpCutFactor => _jumpCutFactor;
-
 }
