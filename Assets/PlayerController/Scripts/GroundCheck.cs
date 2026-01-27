@@ -1,7 +1,7 @@
 /*****************************************************************************
 * Project : 3D Character Controller (K2, S2, S3)
 * File    : GroundCheck.cs
-* Date    : xx.xx.2025
+* Date    : 28.01.2026
 * Author  : Eric Rosenberg
 *
 * Description :
@@ -10,7 +10,7 @@
 * and state for debugging purposes.
 *
 * History :
-* xx.xx.2025 ER Created
+* 28.01.2026 ER Created
 ******************************************************************************/
 using UnityEngine;
 
@@ -19,15 +19,18 @@ using UnityEngine;
 /// Uses a box overlap check against specified ground layers.
 /// </summary>
 public class GroundCheck : MonoBehaviour
-{
-    //--- Field ---
-    [Header("Settings")]
+{    
+    [Header("Dependencies")]
     [Tooltip("Layers that are considered ground.")]
     [SerializeField] private LayerMask _layer;
+
+    [Header("Settings")]
     [Tooltip("Size of the ground check box.")]
     [SerializeField] private Vector3 _boxSize;
+
     [Tooltip("Offset position of the ground check box.")]
     [SerializeField] private Vector3 _boxOffset;
+
     [Tooltip("Enable debug visualization in the Scene view.")]
     [SerializeField] private bool DebugMode = false;
 

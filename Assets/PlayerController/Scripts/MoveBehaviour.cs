@@ -1,7 +1,7 @@
 /*****************************************************************************
 * Project : 3D Character Controller (K2, S2, S3)
 * File    : MoveBehaviour.cs
-* Date    : 28.01.2025
+* Date    : 28.01.2026
 * Author  : Eric Rosenberg
 *
 * Description :
@@ -11,7 +11,7 @@
 * - In air: applies limited air control and optional air braking.
 *
 * History :
-* 28.01.2025 ER Created
+* 28.01.2026 ER Created
 ******************************************************************************/
 using UnityEngine;
 

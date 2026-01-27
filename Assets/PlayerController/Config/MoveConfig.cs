@@ -1,7 +1,7 @@
 /*****************************************************************************
 * Project : 3D Character Controller (K2, S2, S3)
 * File    : MoveConfig.cs
-* Date    : 28.01.2025
+* Date    : 28.01.2026
 * Author  : Eric Rosenberg
 *
 * Description :
@@ -11,14 +11,14 @@
 * modifying code.
 *
 * History :
-* 28.01.2025 ER Created
+* 28.01.2026 ER Created
 ******************************************************************************/
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MoveConfig", menuName = "Scriptable Objects/MoveConfig")]
 public class MoveConfig : ScriptableObject
 {
-    [Header("Movement")]
+    [Header("MoveBehaviour Settings")]
     [Tooltip("Base movement speed applied when the character is walking.")]
     private float _moveSpeed = 4f;
 

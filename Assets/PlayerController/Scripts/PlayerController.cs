@@ -1,19 +1,19 @@
 /*****************************************************************************
-* Project : 3D Charakter Steuerung (K2, S2, S3)
-* File    : PlayerController
-* Date    : xx.xx.2025
+* Project : 3D Character Controller (K2, S2, S3)
+* File    : PlayerController.cs
+* Date    : 28.01.2026
 * Author  : Eric Rosenberg
 *
 * Description :
-* *
+* Central controller that coordinates player input, movement, jumping,
+* looking, grounding checks and interaction handling.
+* Acts as the main integration point for all behavior modules.
+*
 * History :
-* xx.xx.2025 ER Created
+* 28.01.2026 ER Created
 ******************************************************************************/
-
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-
 
 /// <summary>
 /// Data container holding all relevant state information required
@@ -27,48 +27,57 @@ public struct JumpStateData
 
 }
 public class PlayerController : MonoBehaviour
-{
-    //--- Depedndencies ---
+{    
     [Header("Dependencies")]
     [Tooltip("Rigibody from Player")]
     [SerializeField] private Rigidbody _rb;
+
+    [Tooltip("Ground check component")]
     [SerializeField] private GroundCheck _groundCheck;
+
+    [Tooltip("Camera transform")]
     [SerializeField] private Transform _camTransform;
+
+    [Tooltip("Raycast target provider")]
     [SerializeField] private RaycastTargetProvider _targetProvider;
+
+    [Tooltip("Target interaction handler")]
     [SerializeField] private TargetHandler _targetHandler;
+
+    [Tooltip("Interaction UI panel")]
     [SerializeField] private GameObject _interactionPanel;
 
 
     [Tooltip("MoveConfig Asset")]
     [SerializeField] private MoveConfig _moveConfig;
+
+    [Tooltip("JumpConfig Asset")]
     [SerializeField] private JumpConfig _jumpConfig;
-    [SerializeField] private LookConfig _lookConfig;
 
-    [Tooltip("Activates Multi Jump")]
-    [SerializeField] private bool _multiJumpEnabled = true;
+    [Tooltip("LookConfig Asset")]
+    [SerializeField] private LookConfig _lookConfig;  
 
+    //--- Fields ---
     private MoveBehaviour _moveBehaviour;
     private JumpBehaviour _jumpBehaviour;
     private LookBehaviour _lookBehaviour;
 
-    //--- Fields ---
+    // --- Input State ---
     private Vector2 _moveInput;
     private Vector2 _lookInput;
     private JumpStateData JumpData;
 
-
-
+    // --- Jump Timers ---
     private float _coyoteTimeCounter = 0f;
     private float _jumpBufferCounter = 0f;
 
-
+    // --- Player State ---
     private bool _isGrounded = false;
     private bool _wasGrounded;
     private bool _isSprinting = false;
     private bool _IsControllerInput;
 
-
-
+    // --- Input System ---
     private PlayerInputAction _inputAction;
     private InputAction _move;
     private InputAction _look;
@@ -85,42 +94,28 @@ public class PlayerController : MonoBehaviour
     /// True during the frame in which the player has just left the ground.
     /// </summary>
     public bool JustLeftGround => _wasGrounded && !_isGrounded;
-
-    /// <summary>
-    /// 
-    /// </summary>
+        
     private void Awake()
     {
         MappingInptutAction();
         InitializeData();
     }
 
-
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
+        CurssorSettings();
+    }   
+  
     private void OnEnable()
     {
         _inputAction.Player.Enable();
-
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
+    
     private void OnDisable()
     {
         _inputAction?.Player.Disable();
     }
-
-    // Update is called once per frame
+       
     void Update()
     {
         MappingInput();
@@ -132,10 +127,7 @@ public class PlayerController : MonoBehaviour
         SetIsSprinting();
         HandleInteraction();
     }
-    
-    /// <summary>
-    /// 
-    /// </summary>
+  
     private void FixedUpdate()
     {
         UpdateGroundState();
@@ -143,12 +135,11 @@ public class PlayerController : MonoBehaviour
         ReduceJumpBuffer();
         HandleGroundTransition();
         HandleMovement(_isGrounded);
-        HandleJump();
-       
+        HandleJump();       
     }
 
     /// <summary>
-    /// 
+    /// Reads movement and look input values.
     /// </summary>
     private void MappingInput()
     {
@@ -158,7 +149,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Handles interaction logic with detected targets.
     /// </summary>
     private void HandleInteraction()
     {
@@ -179,7 +170,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the grounded state and tracks ground transitions.
+    /// Updates grounded state and tracks ground transitions.
     /// </summary>
     private void UpdateGroundState()
     {
@@ -199,7 +190,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Resets the coyote time counter.
     /// </summary>
     private void ResetCoyoteTimer()
     {
@@ -228,13 +219,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    ///  Resets the jump buffer timer.
+    /// </summary>
     private void ResetJumpBufferTimer()
     {
         _jumpBufferCounter = _jumpConfig.JumpBufferTime;
     }
 
     /// <summary>
-    /// 
+    /// Handles transitions between grounded and airborne states.
     /// </summary>
     private void HandleGroundTransition()
     {
@@ -249,7 +243,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Attempts to execute a jump if buffered input is available.
     /// </summary>
     private void HandleJump()
     {
@@ -276,14 +270,12 @@ public class PlayerController : MonoBehaviour
     private JumpStateData BuildJumpData(JumpStateData JumpData)
     {
         JumpData.IsGrounded = _isGrounded;
-        JumpData.IsCoyoteActive = IsCoyoteTimeActive();
-        JumpData.MultiJumpEnabled = _multiJumpEnabled;
-
+        JumpData.IsCoyoteActive = IsCoyoteTimeActive();  
         return JumpData;
     }
 
     /// <summary>
-    /// 
+    /// Updates sprinting state based on input.
     /// </summary>
     private void SetIsSprinting()
     {
@@ -306,11 +298,10 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Mapping Input Actions
+    /// Maps input actions from the Input System.
     /// </summary>
     private void MappingInptutAction()
     {
-
         _inputAction = new();
         _move = _inputAction.Player.Move;
         _jump = _inputAction.Player.Jump;
@@ -320,7 +311,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Initializes all behavior modules and state data.
     /// </summary>
     private void InitializeData()
     {
@@ -331,16 +322,35 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Applies horizontal movement logic based on the current grounded state.
+    /// Delegates movement handling to the MoveBehaviour module.
     /// </summary>
-    /// <param name="isGrounded"></param>
+    /// <param name="isGrounded">
+    /// True if the player is currently grounded; false if airborne.
+    /// </param>
     private void HandleMovement(bool isGrounded)
     {
         _moveBehaviour.Move(_moveInput, isGrounded, _isSprinting);
     }
 
+    /// <summary>
+    /// Determines whether the current look input originates from a controller.
+    /// Used to select the appropriate look sensitivity.
+    /// </summary>
+    /// <returns>
+    /// True if the active look input device is a gamepad; otherwise, false.
+    /// </returns>
     private bool IsControllerLook()
     {
         return _look.activeControl?.device is Gamepad;
+    }
+
+    /// <summary>
+    /// Applies cursor lock and visibility settings.
+    /// </summary>
+    private static void CurssorSettings()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

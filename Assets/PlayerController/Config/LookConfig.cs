@@ -1,7 +1,7 @@
 /*****************************************************************************
 * Project : 3D Character Controller (K2, S2, S3)
 * File    : LookConfig.cs
-* Date    : 28.01.2025
+* Date    : 28.01.2026
 * Author  : Eric Rosenberg
 *
 * Description :
@@ -11,14 +11,14 @@
 * without changing code.
 *
 * History :
-* 28.01.2025 ER Created
+* 28.01.2026 ER Created
 ******************************************************************************/
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LookConfig", menuName = "Scriptable Objects/LookConfig")]
 public class LookConfig : ScriptableObject
 {
-    [Header("Settings")]
+    [Header("LookBehaviour Settings")]
     [Tooltip("Defines how sensitive the mouse look movement is.")]
     [Range(0, 1)]
     [SerializeField] private float _mouseSensitivity = 0.279f;
