@@ -13,8 +13,6 @@
 * History :
 * 28.01.2026 ER Created
 ******************************************************************************/
-using UnityEngine;
-
 
 public interface IInteractable
 {

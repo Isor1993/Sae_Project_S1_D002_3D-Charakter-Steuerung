@@ -13,7 +13,6 @@
 * 28.01.2026 ER Created
 ******************************************************************************/
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Ball :MonoBehaviour, IInteractable
 {
