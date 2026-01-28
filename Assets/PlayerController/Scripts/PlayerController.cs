@@ -12,6 +12,7 @@
 * History :
 * 28.01.2026 ER Created
 ******************************************************************************/
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,7 +28,7 @@ public struct JumpStateData
 
 }
 public class PlayerController : MonoBehaviour
-{    
+{
     [Header("Dependencies")]
     [Tooltip("Rigibody from Player")]
     [SerializeField] private Rigidbody _rb;
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private JumpConfig _jumpConfig;
 
     [Tooltip("LookConfig Asset")]
-    [SerializeField] private LookConfig _lookConfig;  
+    [SerializeField] private LookConfig _lookConfig;
 
     //--- Fields ---
     private MoveBehaviour _moveBehaviour;
@@ -94,7 +95,7 @@ public class PlayerController : MonoBehaviour
     /// True during the frame in which the player has just left the ground.
     /// </summary>
     public bool JustLeftGround => _wasGrounded && !_isGrounded;
-        
+
     private void Awake()
     {
         MappingInptutAction();
@@ -104,18 +105,18 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         CurssorSettings();
-    }   
-  
+    }
+
     private void OnEnable()
     {
         _inputAction.Player.Enable();
     }
-    
+
     private void OnDisable()
     {
         _inputAction?.Player.Disable();
     }
-       
+
     void Update()
     {
         MappingInput();
@@ -127,7 +128,7 @@ public class PlayerController : MonoBehaviour
         SetIsSprinting();
         HandleInteraction();
     }
-  
+
     private void FixedUpdate()
     {
         UpdateGroundState();
@@ -135,7 +136,7 @@ public class PlayerController : MonoBehaviour
         ReduceJumpBuffer();
         HandleGroundTransition();
         HandleMovement(_isGrounded);
-        HandleJump();       
+        HandleJump();
     }
 
     /// <summary>
@@ -155,8 +156,15 @@ public class PlayerController : MonoBehaviour
     {
         if (_targetProvider.TryGetTarget(out var hit) &&
         hit.collider.TryGetComponent<IInteractable>(out var interactable))
-        {          
-            _interactionPanel.SetActive(true);
+        {
+            if (!IsControllerLook())
+            {
+                _interactionPanel.SetActive(true);
+            }
+            else
+            {
+                _interactionPanel.SetActive(false);
+            }
 
             if (_interact.WasPressedThisFrame())
             {
@@ -270,7 +278,7 @@ public class PlayerController : MonoBehaviour
     private JumpStateData BuildJumpData(JumpStateData JumpData)
     {
         JumpData.IsGrounded = _isGrounded;
-        JumpData.IsCoyoteActive = IsCoyoteTimeActive();  
+        JumpData.IsCoyoteActive = IsCoyoteTimeActive();
         return JumpData;
     }
 
@@ -344,6 +352,7 @@ public class PlayerController : MonoBehaviour
     {
         return _look.activeControl?.device is Gamepad;
     }
+  
 
     /// <summary>
     /// Applies cursor lock and visibility settings.

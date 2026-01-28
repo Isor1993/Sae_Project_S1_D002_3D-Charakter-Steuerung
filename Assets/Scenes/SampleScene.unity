@@ -990,7 +990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb: {fileID: 591709723}
-  _directionOrgin: {fileID: 330585546}
+  _directionOrigin: {fileID: 0}
   _forwardForce: 10
   _upForce: 3
 --- !u!1 &660817770
@@ -1155,7 +1155,6 @@ MonoBehaviour:
   _moveConfig: {fileID: 11400000, guid: e958d9cdb2a67e140b90d3004a95f572, type: 2}
   _jumpConfig: {fileID: 11400000, guid: 9f20029ef6fa134499d351352130e891, type: 2}
   _lookConfig: {fileID: 11400000, guid: 5b333527ff0095e4d8c07baee26bf2e7, type: 2}
-  _multiJumpEnabled: 1
 --- !u!114 &660817777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,11 +1264,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ccb6dd10135a454aa15ed02e81998d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxDistance: 5
   _targetLayerMask:
     serializedVersion: 2
     m_Bits: 1
   _orgin: {fileID: 330585546}
+  _maxDistance: 5
 --- !u!4 &998230900
 Transform:
   m_ObjectHideFlags: 0

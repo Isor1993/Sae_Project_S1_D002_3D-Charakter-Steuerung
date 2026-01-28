@@ -20,29 +20,28 @@ public class MoveConfig : ScriptableObject
 {
     [Header("MoveBehaviour Settings")]
     [Tooltip("Base movement speed applied when the character is walking.")]
-    private float _moveSpeed = 4f;
+    [SerializeField]private float _moveSpeed = 4f;
 
     [Tooltip("Maximum movement speed applied while sprinting.")]
-    private float _sprintSpeed = 6f;
+    [SerializeField] private float _sprintSpeed = 6f;
 
     [Header("Dynamics")]
     [Tooltip("Rate at which the character accelerates towards the target speed when movement input is applied.")]
-    private float _deceleration = 40f;
+    [SerializeField] private float _deceleration = 40f;
 
     [Tooltip("Rate at which the character slows down when no movement input is present.")]
-    private float _acceleration = 30f;
+    [SerializeField] private float _acceleration = 30f;
 
     [Tooltip("Initial horizontal movement speed when entering the air.")]
-    private float _airStartSpeed = 1f;
+    [SerializeField] private float _airStartSpeed = 1f;
 
     [Tooltip("Braking force applied to horizontal movement while airborne.")]
-    private float _airBrake = 8f;
+    [SerializeField] private float _airBrake = 8f;
 
     [Header("Air Control")]
     [Range(0f, 3f)]
-
     [Tooltip("Multiplier that reduces acceleration and deceleration while the character is airborne.")]
-    private float _airControll = 2f;
+    [SerializeField] private float _airControll = 2f;
 
 
     /// <summary>
